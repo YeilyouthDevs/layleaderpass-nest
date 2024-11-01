@@ -1,7 +1,9 @@
 import { Column, DataType, Table, Model } from "sequelize-typescript";
+import { UserRole } from "src/enums/user-role.enum";
 
 @Table({
-    freezeTableName: true
+    freezeTableName: true,
+    updatedAt: false
 })
 export class User extends Model<User> {
 
@@ -33,12 +35,11 @@ export class User extends Model<User> {
     })
     birthday: Date;
 
-    // 참가자인지를 나타냄. 작업시 참가자만 목록에 표시됨
+    // 사용자 등급
     @Column({
-        type: DataType.BOOLEAN,
+        type: DataType.ENUM(...Object.values(UserRole)),
         allowNull: false,
-        defaultValue: true
+        defaultValue: UserRole.GUEST
     })
-    isParticipant: boolean;
-
+    role: UserRole;
 }
