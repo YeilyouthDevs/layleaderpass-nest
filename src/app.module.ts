@@ -3,8 +3,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { User } from './user/user.model';
 import { DatabaseInitService } from './database-init.service';
+import { User } from './features/user/user.model';
+import { NodeEnv } from './enums/node-env.enum copy';
+import { UserModule } from './features/user/user.module';
 
 @Module({
     imports: [
@@ -15,7 +17,7 @@ import { DatabaseInitService } from './database-init.service';
             imports: [ConfigModule],
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => {
-                const DEV_PREFIX = process.env.NODE_ENV === 'development' ? 'DEV_' : '';
+                const DEV_PREFIX = process.env.NODE_ENV === NodeEnv.DEVELOPMENT ? 'DEV_' : '';
                 
                 return {
                     dialect: 'postgres',
@@ -29,6 +31,7 @@ import { DatabaseInitService } from './database-init.service';
                 }
             }
         }),
+        UserModule
     ],
     controllers: [AppController],
     providers: [
