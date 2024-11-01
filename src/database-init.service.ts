@@ -8,9 +8,14 @@ export class DatabaseInitService implements OnModuleInit {
     constructor(private readonly sequelize: Sequelize) {}
 
     async onModuleInit() {
-
-        // 개발환경인 경우 mock_sql폴더 내 sql파일을 모두 읽어 비동기적으로 실행한다.
+        // 개발환경인 경우
         if (process.env.NODE_ENV === 'development') {
+
+            // DB 초기화
+            await this.sequelize.sync({ force: true });
+            console.log('데이터베이스 초기화 완료.');
+
+            // mock_sql폴더 내 sql파일을 모두 읽어 비동기적으로 실행한다.
             const mockDir = path.join(process.cwd(), 'mock_sql');
 
             try {

@@ -15,17 +15,16 @@ import { DatabaseInitService } from './database-init.service';
             imports: [ConfigModule],
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => {
-                const dev_prefix = process.env.NODE_ENV === 'development' ? 'DEV_' : '';
+                const DEV_PREFIX = process.env.NODE_ENV === 'development' ? 'DEV_' : '';
                 
                 return {
                     dialect: 'postgres',
-                    host: configService.get(`${dev_prefix}DB_HOST`),
-                    port: configService.get(`${dev_prefix}DB_PORT`),
-                    username: configService.get(`${dev_prefix}DB_USERNAME`),
-                    password: configService.get(`${dev_prefix}DB_PASSWORD`),
-                    database: configService.get(`${dev_prefix}DB_DATABASE`),
+                    host: configService.get(`${DEV_PREFIX}DB_HOST`),
+                    port: configService.get(`${DEV_PREFIX}DB_PORT`),
+                    username: configService.get(`${DEV_PREFIX}DB_USERNAME`),
+                    password: configService.get(`${DEV_PREFIX}DB_PASSWORD`),
+                    database: configService.get(`${DEV_PREFIX}DB_DATABASE`),
                     autoLoadModels: true,
-                    synchronize: true,
                     models: [User],
                 }
             }
