@@ -3,7 +3,7 @@ import { UserService } from "./user.service";
 import { CreateUserDTO } from "./dto/create-user.dto";
 import { validationMetadatasToSchemas } from "class-validator-jsonschema";
 
-@Controller('/api/user')
+@Controller('user')
 export class UserController {
     constructor(private readonly userService: UserService) {}
 
@@ -26,6 +26,6 @@ export class UserController {
         } catch (error) {
             throw new HttpException(error.message || 'User creation failed', HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
+    
 }

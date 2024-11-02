@@ -35,7 +35,7 @@ describe('회원가입 테스트', () => {
 
     test('새 User를 생성해야함', () => {
         return supertest(app.getHttpServer())
-        .post('/api/user/signup')
+        .post('/user/signup')
         .send({
             email: 'test@example.com',
             password: 'a12341234',
@@ -47,7 +47,7 @@ describe('회원가입 테스트', () => {
 
     test('DTO 검증 실패 시 적절한 메세지를 수신해야함', () => {
         return supertest(app.getHttpServer())
-        .post('/api/user/signup')
+        .post('/user/signup')
         .send({
             email: 'invalid-email',
             password: 'short',
@@ -56,7 +56,10 @@ describe('회원가입 테스트', () => {
         })
         .expect(400)
         .expect((res) => {
-            console.log(res)
+            const message = res.body.message;
+
+            expect(message).toBeDefined();
+            expect(message.length).toEqual(4);
         })
     })
 })
