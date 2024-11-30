@@ -1,4 +1,4 @@
-import { IsDateString, IsEmail, IsNotEmpty, IsString, MinLength } from "class-validator";
+import { IsDateString, IsEmail, IsNotEmpty, IsPhoneNumber, IsString, MinLength } from "class-validator";
 
 export class CreateUserDTO {
 
@@ -13,6 +13,9 @@ export class CreateUserDTO {
     @IsNotEmpty({ message: '이름이 입력되지 않았습니다.' })
     name: string;
 
+    @IsPhoneNumber('KR', { message: '전화번호 형식이어야 합니다.' })
+    phone: string;
+
     @IsDateString({}, { message: '생년월일은 2000-01-01 같은 형식이어야 합니다.' })
-    birthday: Date;
+    birthday: Date; 
 }
