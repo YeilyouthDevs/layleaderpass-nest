@@ -4,9 +4,13 @@ import { AppService } from './app.service';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseInitService } from './database-init.service';
-import { User } from './features/user/user.model';
+import { User } from './user/user.model';
 import { NodeEnv } from './enums/node-env.enum copy';
-import { UserModule } from './features/user/user.module';
+import { UserModule } from './user/user.module';
+import { MailModule } from './mail/mail.module';
+import { MailService } from './mail/mail.service';
+import { RedisModule } from './redis/redis.module';
+import { RedisService } from './redis/redis.service';
 
 @Module({
     imports: [
@@ -31,12 +35,14 @@ import { UserModule } from './features/user/user.module';
                 }
             }
         }),
-        UserModule
+        UserModule,
+        MailModule,
+        RedisModule
     ],
     controllers: [AppController],
     providers: [
         AppService,
-        DatabaseInitService
+        DatabaseInitService,
     ],
 })
 export class AppModule { }

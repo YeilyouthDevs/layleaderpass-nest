@@ -35,6 +35,12 @@ export class User extends Model<User> {
     })
     birthday: Date;
 
+    //전화번호
+    @Column({
+        type: DataType.STRING
+    })
+    phone: string;
+
     // 사용자 등급
     @Column({
         type: DataType.ENUM(...Object.values(UserRole)),
