@@ -12,7 +12,11 @@ describe('RedisService', () => {
     service = module.get<RedisService>(RedisService);
   });
 
-  it('should be defined', () => {
+  afterAll(async () => {
+    await service.disconnect(); // Ensure you have a disconnect method in your RedisService
+  });
+
+  test('서비스가 정의되어 있어야 함', () => {
     expect(service).toBeDefined();
   });
 });

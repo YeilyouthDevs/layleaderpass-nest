@@ -53,7 +53,7 @@ export class UserController {
                     HttpStatus.TOO_MANY_REQUESTS,
                 );
             }
-
+            console.error(error);
             throw new HttpException({ message: '인증코드 전송중 오류발생. 다시 시도해주세요.' }, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 

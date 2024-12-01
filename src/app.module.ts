@@ -5,12 +5,12 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseInitService } from './database-init.service';
 import { User } from './user/user.model';
-import { NodeEnv } from './enums/node-env.enum copy';
+import { NodeEnv } from './enums/node-env.enum';
 import { UserModule } from './user/user.module';
 import { MailModule } from './mail/mail.module';
-import { MailService } from './mail/mail.service';
 import { RedisModule } from './redis/redis.module';
-import { RedisService } from './redis/redis.service';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
     imports: [
@@ -21,19 +21,23 @@ import { RedisService } from './redis/redis.service';
             imports: [ConfigModule],
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => {
-                const DEV_PREFIX = process.env.NODE_ENV === NodeEnv.DEVELOPMENT ? 'DEV_' : '';
+                const PREFIX = process.env.NODE_ENV === NodeEnv.DEVELOPMENT ? 'DEV_' : '';
                 
                 return {
                     dialect: 'postgres',
-                    host: configService.get(`${DEV_PREFIX}DB_HOST`),
-                    port: configService.get(`${DEV_PREFIX}DB_PORT`),
-                    username: configService.get(`${DEV_PREFIX}DB_USERNAME`),
-                    password: configService.get(`${DEV_PREFIX}DB_PASSWORD`),
-                    database: configService.get(`${DEV_PREFIX}DB_DATABASE`),
+                    host: configService.get(`${PREFIX}DB_HOST`),
+                    port: configService.get(`${PREFIX}DB_PORT`),
+                    username: configService.get(`${PREFIX}DB_USERNAME`),
+                    password: configService.get(`${PREFIX}DB_PASSWORD`),
+                    database: configService.get(`${PREFIX}DB_DATABASE`),
                     autoLoadModels: true,
                     models: [User],
                 }
             }
+        }),
+        ServeStaticModule.forRoot({
+            rootPath: join(process.cwd(), (process.env.NODE_ENV === NodeEnv.PRODUCTION) ? 'layleaderpass/build' : 'build'),
+            exclude: ['/api*']
         }),
         UserModule,
         MailModule,

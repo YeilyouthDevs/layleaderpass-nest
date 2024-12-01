@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 import * as ejs from 'ejs';
 import { join } from 'path';
+import { NodeEnv } from 'src/enums/node-env.enum';
 
 @Injectable()
 export class MailService {
@@ -19,7 +20,7 @@ export class MailService {
     }
 
     async sendMail(to: string, subject: string, template: string, context: Record<string, any>): Promise<void> {
-        const templatePath = join(process.cwd(), 'templates', `${template}.ejs`);
+        const templatePath = join(process.cwd(), (process.env.NODE_ENV === NodeEnv.PRODUCTION) ? 'layleaderpass/templates' : 'templates', `${template}.ejs`);
         const html = await ejs.renderFile(templatePath, context);
 
         const mailOptions = {
@@ -31,7 +32,6 @@ export class MailService {
 
         try {
             await this.transporter.sendMail(mailOptions);
-            console.log(`메일 전송됨: ${to}, ${template}`);
         } catch (error) {
             console.error('메일 전송 중 오류 발생:', error);
             throw new Error('메일 전송 실패');
