@@ -31,7 +31,6 @@ export class MailService {
 
         try {
             await this.transporter.sendMail(mailOptions);
-            console.log(`메일 전송됨: ${to}, ${template}`);
         } catch (error) {
             console.error('메일 전송 중 오류 발생:', error);
             throw new Error('메일 전송 실패');

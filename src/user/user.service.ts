@@ -26,23 +26,10 @@ export class UserService {
         return this.userModel.findOne({ where: { email } }); // 이메일로 사용자 검색
     }
 
-    generateVerificationCode(): string {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        const length = 6;
-        let code = '';
-
-        for (let i = 0; i < length; i++) {
-            const randomIndex = Math.floor(Math.random() * characters.length);
-            code += characters[randomIndex];
-        }
-
-        return code;
-    }
-
     async getOrGenVerifyCode(email: string): Promise<string> {
         const TTL = 60 * 20; // 20분
         const RATE_LIMIT_THRESHOLD = 60 * 1; // 1분 제한
-        const verifyCodeKey = `register-verify-code:${email}`;
+        const verifyCodeKey = this.redisService.genRegisterVerifyCodeKey(email);
     
         // 기존 코드 및 TTL 확인
         const code = await this.redisService.get(verifyCodeKey);
@@ -55,7 +42,7 @@ export class UserService {
         }
     
         // 새 코드 생성 및 TTL 설정
-        const newCode = code ?? this.generateVerificationCode();
+        const newCode = code ?? this.redisService.genVerificationCode();
         if (!code) {
             await this.redisService.set(verifyCodeKey, newCode, TTL); // 20분 TTL
         }
@@ -65,7 +52,7 @@ export class UserService {
     
 
     async checkVerifyCode(email: string, code: string): Promise<boolean> {
-        const key = `register-verify-code:${email}`;
+        const key = this.redisService.genRegisterVerifyCodeKey(email);
         let existsCode = await this.redisService.get(key);
 
         if (existsCode === code) {

@@ -1,16 +1,16 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 
 @Injectable()
 export class RedisService implements OnModuleDestroy {
     private client: Redis;
 
-    constructor() {
-        //TODO Redis 접속 정보 환경변수로 옮기기
+    constructor(private readonly configService: ConfigService) {
         this.client = new Redis({
-            host: 'localhost', // Redis 호스트
-            port: 6379, // Redis 포트
-            password: '', // Redis 비밀번호 (필요한 경우)
+            host: this.configService.get('REDIS_HOST'),
+            port: this.configService.get('REDIS_PORT'),
+            password: this.configService.get('REDIS_PASS'),
         });
 
         this.client.on('connect', () => {
@@ -20,6 +20,10 @@ export class RedisService implements OnModuleDestroy {
         this.client.on('error', (err) => {
             console.error('Redis error:', err);
         });
+    }
+
+    async disconnect(): Promise<void> {
+        await this.client.quit();
     }
 
     // Redis 명령 실행 메서드
@@ -46,9 +50,29 @@ export class RedisService implements OnModuleDestroy {
     async ttl(key: string) : Promise<number> {
         return this.client.ttl(key);
     }
-
+    
     // 모듈 종료 시 Redis 연결 해제
     onModuleDestroy() {
         this.client.quit();
     }
+
+    // 키 생성 --------------------
+
+    genVerificationCode(): string {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        const length = 6;
+        let code = '';
+
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            code += characters[randomIndex];
+        }
+
+        return code;
+    }
+
+    genRegisterVerifyCodeKey(email: string): string {
+        return `reg-vcode:${email}`
+    }
+
 }

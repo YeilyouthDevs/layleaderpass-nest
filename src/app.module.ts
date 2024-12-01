@@ -5,12 +5,14 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseInitService } from './database-init.service';
 import { User } from './user/user.model';
-import { NodeEnv } from './enums/node-env.enum copy';
+import { NodeEnv } from './enums/node-env.enum';
 import { UserModule } from './user/user.module';
 import { MailModule } from './mail/mail.module';
 import { MailService } from './mail/mail.service';
 import { RedisModule } from './redis/redis.module';
 import { RedisService } from './redis/redis.service';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
     imports: [
@@ -34,6 +36,10 @@ import { RedisService } from './redis/redis.service';
                     models: [User],
                 }
             }
+        }),
+        ServeStaticModule.forRoot({
+            rootPath: join(process.cwd(), 'build'),
+            exclude: ['/api*']
         }),
         UserModule,
         MailModule,

@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as fs from 'fs';
-import { NodeEnv } from './enums/node-env.enum copy';
+import { NodeEnv } from './enums/node-env.enum';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);

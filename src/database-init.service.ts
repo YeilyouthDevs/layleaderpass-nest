@@ -2,7 +2,7 @@ import { Injectable, OnModuleInit } from "@nestjs/common";
 import * as path from "path";
 import * as fs from 'fs/promises';
 import { Sequelize } from "sequelize-typescript";
-import { NodeEnv } from "./enums/node-env.enum copy";
+import { NodeEnv } from "./enums/node-env.enum";
 
 @Injectable()
 export class DatabaseInitService implements OnModuleInit {
