@@ -4,6 +4,7 @@ import { User } from "./user.model";
 import { CreateUserDTO } from "./dto/create-user.dto";
 import { RedisService } from "src/redis/redis.service";
 import { RateLimitExceededException } from "src/exceptions/rate-limit-exceed.exception";
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -14,6 +15,10 @@ export class UserService {
     ) { }
 
     async createUser(createUserDTO: CreateUserDTO): Promise<User> {
+        const user = await this.findUserByEmail(createUserDTO.email);
+        if (user) throw new Error('이미 사용자가 존재해 가입할 수 없습니다.');
+
+        createUserDTO.password = bcrypt.hashSync(createUserDTO.password, bcrypt.genSaltSync());
         return this.userModel.create(createUserDTO as User);
     }
 
@@ -36,7 +41,7 @@ export class UserService {
 
     async getOrGenVerifyCode(email: string): Promise<string> {
         const TTL = 60 * 20; // 20분
-        const RATE_LIMIT_THRESHOLD = 60 * 2; // 2분 제한
+        const RATE_LIMIT_THRESHOLD = 60 * 1; // 1분 제한
         const verifyCodeKey = `register-verify-code:${email}`;
     
         // 기존 코드 및 TTL 확인

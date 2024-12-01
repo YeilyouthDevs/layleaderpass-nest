@@ -5,7 +5,6 @@ import { EmailDTO } from "./dto/email.dto";
 import { RedisService } from "src/redis/redis.service";
 import { MailService } from "src/mail/mail.service";
 import { VerifyDTO } from "./dto/verify-code.dto";
-import { message } from "typia/lib/protobuf";
 import { RateLimitExceededException } from "src/exceptions/rate-limit-exceed.exception";
 
 @Controller('user')
@@ -18,12 +17,13 @@ export class UserController {
             const user = await this.userService.createUser(createUserDTO);
 
             if (user) {
-                return { message: 'User created successfully' };
+                return { message: '회원가입이 완료되었습니다.' };
             } else {
-                throw new HttpException('User creation failed', HttpStatus.BAD_REQUEST);
+                throw new HttpException('회원가입이 실패했습니다.', HttpStatus.BAD_REQUEST);
             }
         } catch (error) {
-            throw new HttpException(error.message || 'User creation failed', HttpStatus.INTERNAL_SERVER_ERROR);
+            if (error instanceof HttpException) throw error;
+            throw new HttpException('회원가입 중 오류가 발생했습니다.', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -49,7 +49,7 @@ export class UserController {
         } catch (error) {
             if (error instanceof RateLimitExceededException) {
                 throw new HttpException(
-                    { message: '인증코드 요청은 2분마다 가능합니다.' },
+                    { message: '인증코드 요청은 1분마다 가능합니다.' },
                     HttpStatus.TOO_MANY_REQUESTS,
                 );
             }
