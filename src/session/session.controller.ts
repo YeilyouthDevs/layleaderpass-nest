@@ -1,13 +1,9 @@
 import { Body, Controller, Delete, HttpException, HttpStatus, Post, Put, Query, Req, Res } from '@nestjs/common';
 import { SessionService } from './session.service';
-import { LoginDTO } from './dto/login.dto';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from 'src/http/http.service';
-import { JwtService } from '@nestjs/jwt';
-import { RedisService } from 'src/redis/redis.service';
 import { UserService } from 'src/user/user.service';
-import { User } from 'src/user/user.model';
 
 @Controller('session')
 export class SessionController {
@@ -20,7 +16,7 @@ export class SessionController {
     ) { }
 
     @Post('login')
-    async login(@Body() loginDto: LoginDTO, @Res() res: Response) {
+    async login(@Body() loginDto: { email: string, password: string }, @Res() res: Response) {
 
         const { email, password } = loginDto;
 
@@ -84,12 +80,8 @@ export class SessionController {
         }
     
         const REFRESH_TTL = this.configService.get('JWT_REFRESH_TTL');
-        let user: User | null = null;
+        let user = await this.userService.findUserByEmail(result.email);
 
-        if (!accessToken) {
-            user = await this.userService.findUserByEmail(result.email);
-            if (!user) throw new Error('사용자를 찾을 수 없음');
-        }
 
         this.httpService.setCookie(res, 'refreshToken', result.refreshToken, parseInt(REFRESH_TTL.slice(0, -1)) * 1000)
         .json({
