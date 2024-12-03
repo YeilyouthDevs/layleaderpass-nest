@@ -1,5 +1,7 @@
 TRUNCATE TABLE "User" RESTART IDENTITY;
 
-INSERT INTO "User" (email, password, name, birthday, "createdAt") VALUES
-('test@example.com', 'password123', '홍길동', '2000-01-01', NOW()),
-('sample@example.com', 'password456', '김철수', '1990-06-01', NOW());
+-- 비밀번호는 a12341234 로 통일
+INSERT INTO "User" (email, password, name, birthday, role, "createdAt") VALUES
+('user1@example.com', '$2b$10$MQQWwT3f/p5LgY5oVYp22u1J6ga4AkgtCqhYCmuRg5GEl2SqWO3l6', '홍길동', '2000-01-01', 'ADMIN', NOW()),
+('user2@example.com', '$2b$10$MQQWwT3f/p5LgY5oVYp22u1J6ga4AkgtCqhYCmuRg5GEl2SqWO3l6', '김철수', '1990-06-01', 'USER', NOW()),
+('user3@example.com', '$2b$10$MQQWwT3f/p5LgY5oVYp22u1J6ga4AkgtCqhYCmuRg5GEl2SqWO3l6', '신짱구', '1990-06-01', 'GUEST', NOW());

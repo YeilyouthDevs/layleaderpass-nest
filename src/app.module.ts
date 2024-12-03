@@ -11,6 +11,12 @@ import { MailModule } from './mail/mail.module';
 import { RedisModule } from './redis/redis.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { SessionService } from './session/session.service';
+import { SessionController } from './session/session.controller';
+import { SessionModule } from './session/session.module';
+import { JwtModule } from '@nestjs/jwt';
+import { HttpService } from './http/http.service';
+import { HttpModule } from './http/http.module';
 
 @Module({
     imports: [
@@ -39,14 +45,21 @@ import { join } from 'path';
             rootPath: join(process.cwd(), (process.env.NODE_ENV === NodeEnv.PRODUCTION) ? 'layleaderpass/build' : 'build'),
             exclude: ['/api*']
         }),
+        JwtModule.register({
+            global: true
+        }),
         UserModule,
         MailModule,
-        RedisModule
+        RedisModule,
+        SessionModule,
+        HttpModule,
     ],
-    controllers: [AppController],
+    controllers: [AppController, SessionController],
     providers: [
         AppService,
         DatabaseInitService,
+        SessionService,
+        HttpService,
     ],
 })
 export class AppModule { }

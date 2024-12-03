@@ -54,6 +54,27 @@ export class RedisService implements OnModuleDestroy {
     async ttl(key: string) : Promise<number> {
         return this.client.ttl(key);
     }
+
+    async maintainKeyCount(pattern: string, maxCount: number): Promise<void> {
+        const keys = await this.keys(pattern); // 패턴에 맞는 모든 키 검색
+    
+        if (keys.length > maxCount) {
+            // TTL 값을 기준으로 정렬 (오래된 것부터 삭제)
+            const keysWithTTL = await Promise.all(
+                keys.map(async (key) => ({
+                    key,
+                    ttl: await this.ttl(key),
+                }))
+            );
+    
+            // TTL이 낮은 순으로 정렬
+            keysWithTTL.sort((a, b) => a.ttl - b.ttl);
+    
+            // 초과한 키 삭제
+            const keysToDelete = keysWithTTL.slice(0, keysWithTTL.length - maxCount).map((item) => item.key);
+            await Promise.all(keysToDelete.map((key) => this.del(key)));
+        }
+    }
     
     // 모듈 종료 시 Redis 연결 해제
     onModuleDestroy() {
@@ -77,6 +98,10 @@ export class RedisService implements OnModuleDestroy {
 
     genRegisterVerifyCodeKey(email: string): string {
         return `reg-vcode:${email}`
+    }
+
+    genRefreshTokenKey(email: string, token?: string): string {
+        return `refTok:${email}:${token || '*'}`
     }
 
 }
