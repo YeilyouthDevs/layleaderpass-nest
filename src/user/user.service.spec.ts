@@ -26,7 +26,6 @@ describe('UserService', () => {
     };
 
     beforeEach(async () => {
-        // Mock dependencies
         mockUserModel = {
             create: jest.fn(),
             findOne: jest.fn(),
@@ -105,7 +104,7 @@ describe('UserService', () => {
 
     describe('getOrGenVerifyCode', () => {
         const email = 'test@test.com';
-        const key = `reg-vcode:${email}`;
+        const key = `test-key:${email}`;
         const generatedCode = 'ABC123';
 
         beforeEach(() => {
@@ -145,7 +144,7 @@ describe('UserService', () => {
 
     describe('checkVerifyCode', () => {
         const email = 'test@test.com';
-        const key = `reg-vcode:${email}`;
+        const key = `test-key:${email}`;
         const validCode = 'ABC123';
 
         beforeEach(() => {
