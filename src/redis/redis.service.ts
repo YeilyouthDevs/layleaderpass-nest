@@ -100,8 +100,8 @@ export class RedisService implements OnModuleDestroy {
         return `reg-vcode:${email}`
     }
 
-    genRefreshTokenKey(email: string, token?: string): string {
-        return `refTok:${email}:${token || '*'}`
+    genRefreshTokenKey(email: string, uuid?: string,): string {
+        return `refTok:${email}:${uuid || '*'}`
     }
 
 }

@@ -17,6 +17,10 @@ import { SessionModule } from './session/session.module';
 import { JwtModule } from '@nestjs/jwt';
 import { HttpService } from './http/http.service';
 import { HttpModule } from './http/http.module';
+import { TrainingType } from './training-type/training-type.model';
+import { Training } from './training/training.model';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { CheckSessionInterceptor } from './session/check-session.interceptor';
 
 @Module({
     imports: [
@@ -37,7 +41,11 @@ import { HttpModule } from './http/http.module';
                     password: configService.get(`${PREFIX}DB_PASSWORD`),
                     database: configService.get(`${PREFIX}DB_DATABASE`),
                     autoLoadModels: true,
-                    models: [User],
+                    models: [
+                        User,
+                        TrainingType,
+                        Training
+                    ],
                 }
             }
         }),
@@ -60,6 +68,7 @@ import { HttpModule } from './http/http.module';
         DatabaseInitService,
         SessionService,
         HttpService,
+        { provide: APP_INTERCEPTOR, useClass: CheckSessionInterceptor }
     ],
 })
 export class AppModule { }
