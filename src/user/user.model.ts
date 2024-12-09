@@ -43,7 +43,7 @@ export class User extends Model<User> {
 
     // 사용자 등급
     @Column({
-        type: DataType.ENUM(...Object.values(UserRole)),
+        type: DataType.SMALLINT.UNSIGNED,
         allowNull: false,
         defaultValue: UserRole.GUEST
     })
