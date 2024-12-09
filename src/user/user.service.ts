@@ -5,6 +5,7 @@ import { CreateUserDTO } from "./dto/create-user.dto";
 import { RedisService } from "src/redis/redis.service";
 import { RateLimitExceededException } from "src/exceptions/rate-limit-exceed.exception";
 import * as bcrypt from 'bcrypt';
+import { FindOptions } from "sequelize";
 
 @Injectable()
 export class UserService {
@@ -22,8 +23,8 @@ export class UserService {
         return this.userModel.create(createUserDTO as User);
     }
 
-    async findUserByEmail(email: string): Promise<User | null> {
-        return this.userModel.findOne({ where: { email } }); // 이메일로 사용자 검색
+    async findUserByEmail(email: string, findOptions?: FindOptions): Promise<User | null> {
+        return this.userModel.findOne({ where: { email }, ...findOptions }); // 이메일로 사용자 검색
     }
 
     async getOrGenVerifyCode(email: string): Promise<string> {

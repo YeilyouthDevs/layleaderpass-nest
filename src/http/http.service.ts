@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 @Injectable()
 export class HttpService {
@@ -11,6 +11,14 @@ export class HttpService {
             sameSite: 'strict',
             maxAge: ageInMillis
         })
+    }
+
+    deleteCookie(res: Response, name: string) {
+        return this.setCookie(res, name, '', 0);
+    }
+
+    getIpAddress(req: Request) {
+        return req.headers['x-forwarded-for'] as string || req.ip || 'undefined';
     }
 
 }
