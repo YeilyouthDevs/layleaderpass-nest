@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { FindOptions } from 'sequelize';
 import { UserRole } from 'src/enums/user-role.enum';
 import { RedisService } from 'src/redis/redis.service';
 import { UserService } from 'src/user/user.service';
@@ -24,8 +25,8 @@ export class SessionService {
 
     }
 
-    async checkEmailAndPassword(userEmail: string, password: string) {
-        const foundUser = await this.userService.findUserByEmail(userEmail);
+    async checkEmailAndPassword(userEmail: string, password: string, findOptions?: FindOptions) {
+        const foundUser = await this.userService.findUserByEmail(userEmail, findOptions);
         if (!foundUser) return { result: false };
 
         return {
